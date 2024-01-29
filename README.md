@@ -13,15 +13,15 @@ A platform for online education where users can purchase courses, watch instruct
 
 ## Demo
 
-![My Image](../ImageDemo_Readme/homepage.PNG)
+![My Image](ImageDemo_Readme/homepage.PNG)
 #
-![My Image](../ImageDemo_Readme/blog.PNG)
+![My Image](ImageDemo_Readme/blog.PNG)
 #
-![My Image](../ImageDemo_Readme/login.PNG)
+![My Image](ImageDemo_Readme/login.PNG)
 #
-![My Image](../ImageDemo_Readme/profile.PNG)
+![My Image](ImageDemo_Readme/profile.PNG)
 #
-![My Image](../ImageDemo_Readme/course.PNG)
+![My Image](ImageDemo_Readme/course.PNG)
 #
-![My Image](../ImageDemo_Readme/cart.PNG)
+![My Image](ImageDemo_Readme/cart.PNG)
 #

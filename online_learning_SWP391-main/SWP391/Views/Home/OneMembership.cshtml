@@ -1,0 +1,83 @@
+﻿@model SWP391.Controllers.Product
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "CHECKOUT";
+}
+
+<div class="page-content bg-white">
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="#">Home</a></li>
+                <li>Cart</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-block">
+        <!-- About Us -->
+        <div class="section-area section-sp1">
+            <div class="container">
+                <form id="payment-form" method="post" asp-controller="Home" asp-action="CheckoutMembership">
+                    <div class="row">
+                        @Html.HiddenFor(n => n.Id)
+                        <div class="col-lg-8 col-md-7 col-sm-12">
+                            <div class="courses-post">
+                                <div class="ttr-post-info">
+                                    <div class="ttr-post-title ">
+                                        <h1 class="post-title">Plan: @Model.PricePackage.PricePackageName</h1>
+                                    </div>
+
+                                </div>
+                                <div class="ttr-post-text">
+                                    <p>@Model.PricePackage.Properties</p>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Purchase</button>
+                            </div>
+
+
+                            @Html.HiddenFor(n => n.Nonce, new { @id = "nonce" })
+                            <input asp-for="@Model.PricePackage.PricePackageId" value="@Model.PricePackage.PricePackageId" hidden />
+                            <input asp-for="@Model.PricePackage.Price" value="@Model.PricePackage.Price" hidden />
+
+                        </div>
+                        <div class="col-lg-4 col-md-5 col-sm-12 m-b30">
+                            <section>
+                                <div class="bt-drop-in-wrapper">
+                                    <div id="bt-dropin"></div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </form>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.braintreegateway.com/web/dropin/1.22.0/js/dropin.min.js"></script>
+<script>
+    var client_token = "@ViewBag.ClientToken";
+    var form = document.querySelector('#payment-form');
+
+    braintree.dropin.create({
+        authorization: client_token,
+        container: '#bt-dropin'
+    }, function (createErr, instance) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            instance.requestPaymentMethod(function (err, payload) {
+                if (err) {
+                    return;
+                }
+
+                document.querySelector('#nonce').value = payload.nonce;
+                form.submit();
+            });
+        });
+    });
+</script>

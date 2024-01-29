@@ -1,0 +1,268 @@
+﻿@model List<SWP391.Models.QuizQuestion>
+@{
+    ViewData["Title"] = "ATTEMPT";
+    Layout = "_Layout";
+}
+<div class="breadcrumb-row">
+    <div class="container">
+        <ul class="list-inline">
+            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li>Attempt: @Model.ElementAt(0).Quiz.Name - @Model.ElementAt(0).Quiz.Topic.TopicName </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="content-block">
+    <!-- About Us -->
+    <div class="section-area section-sp1">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Component</th>
+                                <th scope="col">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Time</td>
+                                <td>
+                                    <div>
+                                        <span id="time">01:00</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Date</td>
+                                <td>@String.Format("{0:MM/dd/yyyy}", DateTime.Now.Date)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination-bx rounded-sm gray clearfix">
+                        <ul class="pagination">
+                            <li><a id="1" class="btn info blue">1</a></li>
+                            <li><a id="2" class="btn info  blue">2</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-9 col-md-8 col-sm-12">
+
+                    @if (Model.Count > 0)
+                                {
+                                    string sub;
+                                    int counter = 0;
+                                    string attr;
+                        <form asp-controller="Course" asp-action="RecordAttempt" method="post" id="myform">
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+
+                                @*}
+                                    @foreach (var question in Model)
+                                    {*@
+
+                                <div class="row">
+
+                                    <div class="@("col-md-12 col-lg-12 col-sm-12 m-b20 question-main")" name="@(sub = counter < 5 ? "div1" : "div2")" @(attr = counter < 5 ? "" : "hidden")>
+                                        @{counter += 1;}
+                                        <h5>@Model[i].QuestionBank.Content <button id="@Model[i].QuestionBank.QuestionId" disabled class="btn blue" style="pointer-events: none;font-size: 10px; align-self: center ">Weight: @Model[i].QuestionBank.Weight</button></h5>
+
+                                        <label class="form-control">
+                                            <input type="radio" name="@Model[i].QuestionBank.QuestionId" value="@Model[i].QuestionBank.OptionA" />
+                                            @Model[i].QuestionBank.OptionA
+                                        </label>
+                                        <label class="form-control">
+                                            <input type="radio" name="@Model[i].QuestionBank.QuestionId" value="@Model[i].QuestionBank.OptionB" />
+                                            @Model[i].QuestionBank.OptionB
+                                        </label>
+                                        <label class="form-control">
+                                            <input type="radio" name="@Model[i].QuestionBank.QuestionId" value="@Model[i].QuestionBank.OptionC"/>
+                                            @Model[i].QuestionBank.OptionC
+                                        </label>
+                                        <label class="form-control">
+                                            <input type="radio" name="@Model[i].QuestionBank.QuestionId" value="@Model[i].QuestionBank.OptionD"  />
+                                            @Model[i].QuestionBank.OptionD
+                                        </label>
+                                        @*<input hidden asp-for="@Model.ElementAt(Model.IndexOf(question)).QuestionBank.QuestionId" value="@Model.ElementAt(Model.IndexOf(question)).QuestionBank.QuestionId" />*@
+                                        @Html.HiddenFor(m => Model[i].QuestionId)
+                                        @Html.HiddenFor(m => Model[i].QuizId)
+                                        @Html.HiddenFor(m => Model[i].QuestionBank.Answer)
+                                        @Html.HiddenFor(m => Model[i].QuestionBank.QuestionId)
+                                        @Html.HiddenFor(m => Model[i].QuestionBank.Weight)
+
+
+
+
+
+                                    </div>
+
+                                </div>
+
+                            }
+                            <button type="submit" class="btn blue" id="submit">Submit</button>
+                        </form>
+
+                    }
+
+
+
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <style>
+
+
+        :root {
+            --form-control-color: rebeccapurple;
+        }
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        form {
+            display: grid;
+            /*  place-content: center;*/
+        }
+
+        .form-control {
+            font-family: system-ui, sans-serif;
+            font-size: inherit;
+            line-height: 1.3rem;
+            display: grid;
+            grid-template-columns: 1em auto;
+            gap: 0.5em;
+            border-color: #fff;
+        }
+
+            /*.form-control + .form-control {
+          margin-top: 1em;
+        }*/
+
+            .form-control:focus-within {
+                color: var(--form-control-color);
+            }
+
+        input[type="radio"] {
+            /* Add if not using autoprefixer */
+            -webkit-appearance: none;
+            /* Remove most all native input styles */
+            appearance: none;
+            /* For iOS < 15 */
+            background-color: var(--form-background);
+            /* Not removed via appearance */
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 0.15em solid currentColor;
+            border-radius: 50%;
+            transform: translateY(-0.075em);
+            display: grid;
+            place-content: center;
+        }
+
+            input[type="radio"]::before {
+                content: "";
+                width: 0.65em;
+                height: 0.65em;
+                border-radius: 50%;
+                transform: scale(0);
+                transition: 120ms transform ease-in-out;
+                box-shadow: inset 1em 1em var(--form-control-color);
+                /* Windows High Contrast Mode */
+                background-color: CanvasText;
+            }
+
+            input[type="radio"]:checked::before {
+                transform: scale(1);
+            }
+
+            input[type="radio"]:focus {
+                outline: max(2px, 0.15em) solid currentColor;
+                outline-offset: max(2px, 0.15em);
+            }
+    </style>
+
+
+
+
+
+
+    @section Scripts {
+
+        <script>
+
+   
+            setTimeout(function () {
+                document.getElementById('submit').click();
+            }, 60000 * @Model.ElementAt(0).Quiz.Duration);
+
+             function startTimer(duration, display) {
+                var timer = duration, minutes, seconds;
+                setInterval(function () {
+                    minutes = parseInt(timer / 60, 10);
+                    seconds = parseInt(timer % 60, 10);
+
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                    display.textContent = minutes + ":" + seconds;
+
+                    while (--timer < 0) {
+                        timer = duration;
+                    }
+                }, 1000);
+            }
+
+            window.onload = function () {
+                var time = 60 * @Model.ElementAt(0).Quiz.Duration,
+                display = document.querySelector('#time');
+                startTimer(time, display);
+            };
+        </script>
+
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".info").click(function (event) {
+
+                    $(".question-main").hide();
+                    var id = $(event.target).attr('id');
+                    $("[name=div" + id + "]").show();
+                    $("[name=div" + id + "]").removeAttr("hidden");
+                });
+            });
+        </script>
+
+
+
+
+    }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+

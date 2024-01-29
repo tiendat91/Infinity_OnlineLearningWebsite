@@ -1,0 +1,164 @@
+﻿@model List<SWP391.Models.Topic>
+@{
+    ViewData["Title"] = "LESSON";
+    Layout = "_Layout";
+}
+
+
+
+<div class="page-content bg-white">
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li>Courses Lessons: @(Model.ElementAt(0).Course.Title)</li>
+            </ul>
+        </div>
+    </div>
+    <div class="content-block">
+        <div class="section-area section-sp1">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-7 col-sm-12">
+                        <div class="courses-post">
+                            <div class="video">
+                                <div id="border_wrap">
+                                    <video src=@(Model.ElementAt(0).Lessons.ElementAt(0).VideoURL) width="100%" controls></video>
+                                </div>
+                                <br />
+                                <h3 class="title">@(Model.ElementAt(0).Lessons.ElementAt(0).LessonName)</h3>
+                            </div>
+                            <div class="row lesson-main">
+                                <div class="btn-group" role="group">
+                                    <button onclick="scriptToggle()" class="btn blue" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                        Script
+                                    </button>
+                                    <button onclick="noteToggle()" class="btn blue" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample">
+                                        Note
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="collapse" id="collapseExample">
+                                <div class="card card-body">
+                                    @(Model.ElementAt(0).Lessons.ElementAt(0).Script)
+                                </div>
+                            </div>
+                            <div class="collapse" id="collapseExample2">
+                                <div class="card card-body">
+                                    <textarea class="text_mop" id="summernoteEditor"></textarea>
+                                    <button type="button" class="btn blue" value="save" id="save">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-5 col-sm-12 m-b30">
+
+                        <div class="accordion" id="accordionExample">
+                            @foreach (var topic in Model)
+                            {
+                                @:<div class="card">
+                                    <div class="card-header" id="@("headingOne" + Model.IndexOf(topic))" style="background-color: #00c5dc">
+                                        <h2 class="mb-0">
+                                            <button class="btn blue" type="button" data-toggle="collapse" data-target="@("#collapseOne" + Model.IndexOf(topic))" aria-expanded="true" aria-controls="collapseOne">
+                                                @(topic.TopicName)
+                                            </button>
+                                        </h2>
+                                    </div>
+
+                                    @:<div id="@("collapseOne" + Model.IndexOf(topic))" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                        @:<div class="card-body">
+                                            @:<ul class="list-group">
+                                                @foreach (var lesson in topic.Lessons)
+                                                {
+                                                    <li class="list-group-item">
+                                                        <p style="margin-bottom:0"><i class="far fa-play-circle"></i> @(lesson.LessonName)</p>
+                                                        <p class="title-vid" hidden>@(lesson.LessonName)</p>
+                                                        <a href="@(lesson.VideoURL)" hidden></a>
+                                                        <p hidden>@(lesson.Script)</p>
+                                                    </li>
+                                                }
+                                            @:</ul>
+                                            <br />
+                                            <div class="list-group">
+                                                <a asp-controller="Course" asp-action="QuizAttempt" asp-route-topicid="@topic.TopicId" class="list-group-item list-group-item-primary">
+                                                    Quiz
+                                                </a>
+                                            </div>
+                                        @:</div>
+                                    @:</div>
+                                @:</div>
+                            }
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<link href="~/css/lesson.css" rel="stylesheet">
+
+@section Scripts {
+    <script src="~/js/lesson.js"></script>
+    <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+    <link href="~/lib/summernote/summernote-bs4.min.css" rel="stylesheet">
+
+    <script>
+        $(document).ready(function () {
+            $('#summernoteEditor').summernote({
+                height: 200,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['height', ['height']]
+                ]
+            });
+        });
+    </script>
+
+}
+<script>
+
+    function saveTextAsFile() {
+        var textToWrite = document.getElementById("summernoteEditor").value;
+        var textFileAsBlob = new Blob([textToWrite], { type: 'text/plain' });
+        var fileNameToSaveAs = "Note.html";
+
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        if (window.webkitURL != null) {
+            downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+        } else {
+            downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+            downloadLink.onclick = destroyClickedElement;
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+        }
+
+        downloadLink.click();
+    }
+
+    var button = document.getElementById('save');
+    button.addEventListener('click', saveTextAsFile);
+
+    function destroyClickedElement(event) {
+        document.body.removeChild(event.target);
+    }
+</script>

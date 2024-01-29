@@ -1,0 +1,98 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using SWP391.Models
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
+@{
+    string cart;
+    var session = HttpContextAccessor.HttpContext.Session;
+    string jsoncart = session.GetString(SWP391.Controllers.CourseController.CARTKEY);
+    if (jsoncart != null)
+    {
+        cart = JsonConvert.DeserializeObject<List<Course>>(jsoncart).Count.ToString();
+
+    }
+    else
+    {
+        cart = "0";
+    }
+
+    var roles = SignInManager.IsSignedIn(User) ? UserManager.GetRolesAsync(UserManager.GetUserAsync(Context.User).Result).Result : null;
+}
+
+
+<div class="top-bar">
+    <div class="container">
+        <div class="row d-flex justify-content-between">
+            <div class="topbar-left">
+                <ul>
+                    <li><a href="faq-1.html"><i class="fa fa-question-circle"></i>Ask a Question</a></li>
+                    <li><a href="https://mail.google.com/mail/?view=cm&fs=1&to=phamanhtuan22022002@gmail.com"><i class="fa fa-envelope-o"></i>Contact us</a></li>
+                </ul>
+            </div>
+            <div class="topbar-right">
+                <ul>
+                    @if (roles != null)
+                    {
+                        if (roles.Contains("Super Admin") || (roles.Contains("Admin") && roles.Contains("Super Admin")))
+                        {
+                            <li>
+                                <a id="membership" asp-action="Membership" asp-controller="Home" title="Membership" class="text-danger">Super Admin <i class="fa-solid fa-crown"></i></a>
+                            </li>
+                        }
+                        else if (roles.Contains("Admin") && !roles.Contains("Super Admin"))
+                        {
+                            <li>
+                                <a id="membership" asp-action="Membership" asp-controller="Home" title="Membership" class="text-success">Admin <i class="fa-solid fa-pencil-square"></i></a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a id="membership" asp-action="Membership" asp-controller="Home" title="Membership" class="text-secondary">Basic <i class="fa-solid fa-book"></i></a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li>
+                            <a id="membership" asp-action="Membership" asp-controller="Home" title="Membership" class="text-primary">Subcription</a>
+                        </li>
+                    }
+                    <li>
+
+                        <a asp-route="cart">Cart(@cart)</a>
+
+                    </li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li>
+                            <a id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile: @UserManager.GetUserName(User)</a>
+                        </li>
+                        <li>
+                            <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                <a href="javascript:;" onclick="document.getElementById('logoutForm').submit();" id="logout">Logout</a>
+                            </form>
+                        </li>
+
+                    }
+                    else
+                    {
+
+                        <li>
+                            <a id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                        </li>
+                        <li>
+                            <a id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                        </li>
+
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://kit.fontawesome.com/3d4ae2f409.js" crossorigin="anonymous"></script>

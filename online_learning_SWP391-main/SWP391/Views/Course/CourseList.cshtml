@@ -1,0 +1,163 @@
+﻿@*@model IEnumerable<SWP391_OnlineLearning_Platform.Models.Category>*@
+@model dynamic
+@{ ViewData["Title"] = "CourseList";
+    Paginated pager = new Paginated();
+    int pageNo = 0;
+    string cate = ViewBag.Category;
+    var courseowners = ViewBag.CourseOwners;
+    int count = 0;
+    if (ViewBag.Paginated != null)
+    {
+        pager = ViewBag.Paginated;
+        pageNo = pager.CurrentPage;
+    }
+}
+
+
+<div class="page-content bg-white">
+    <!-- inner page banner -->
+    <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner/banner3.jpg);">
+        <div class="container">
+            <div class="page-banner-entry">
+                <h1 class="text-white">Our Courses</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="#">Home</a></li>
+                <li>Our Courses</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb row END -->
+    <!-- inner page banner END -->
+    <div class="content-block">
+        <!-- About Us -->
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-12 m-b30">
+                        <div class="widget courses-search-bx placeani">
+                            <form method="post" asp-action="CourseList">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <label>Search Courses</label>
+                                        <input name="key" type="text" required class="form-control">
+                                        <input class="btn btn-success btn-in" type="submit" value="Search" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="widget widget_archive">
+                            <h5 class="widget-title style-1">All Courses</h5>
+                            <ul>
+                                <li class="active"><a asp-action="CourseList" asp-controller="Course">General</a></li>
+                                @foreach (var category in Model.categories)
+                                {
+                                    <li><a asp-action="CourseList" asp-controller="Course" asp-route-cate="@category.CategoryId">@category.CategoryValue</a></li>
+                                }
+                                @*<li><a href="#">IT & Software</a></li>
+                                    <li><a href="#">Photography</a></li>
+                                    <li><a href="#">Programming Language</a></li>
+                                    <li><a href="#">Technology</a></li>*@
+                            </ul>
+                        </div>
+                        <div class="widget">
+                            <a href="#"><img src="assets/images/adv/adv.jpg" alt="" /></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-8 col-sm-12">
+                        <div class="row">
+                            @foreach (var course in Model.courses)
+                            {
+                                <div class="col-md-6 col-lg-4 col-sm-6 m-b30">
+                                    <div class="cours-bx">
+                                        <div class="action-box">
+                                            <img src="~/CourseImg/@course.ThumbnailURL" alt="">
+                                            <a asp-action="CourseDetail" asp-controller="Course" asp-route-id="@course.CourseId" class="btn">Read More</a>
+                                        </div>
+                                        <div class="info-bx text-center flex-column">
+                                            <h5>
+                                                <a asp-action="CourseDetail" asp-controller="Course" asp-route-id="@course.CourseId">@course.Title</a>
+                                            </h5>
+                                            <span>@course.Category.CategoryValue</span>
+                                        </div>
+                                        <div class="cours-more-info">
+                                            <div class="review">
+                                                <span>3 Review</span>
+                                                <ul class="cours-star">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                </ul>
+                                            </div>
+                                            @if (courseowners != null)
+                                            {
+                                                @foreach (var item in courseowners)
+                                                {
+                                                    if (item.CourseId == course.CourseId)
+                                                    {
+                                                        count++;
+                                                    }
+                                                }
+                                                @if (count == 1)
+                                                {
+                                                    <div class="price">
+                                                        <h5 class="text-danger">Paid!</h5>
+                                                    </div>
+                                                    count = 0;
+                                                }
+                                                else
+                                                {
+                                                    <div class="price">
+                                                        <h5>$@course.Price</h5>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="price">
+                                                    <h5>$@course.Price</h5>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-lg-12 m-b20">
+                                <div class="pagination-bx rounded-sm gray clearfix">
+                                    @if (pager.TotalPages > 0)
+                                    {
+                                        <ul class="pagination">
+                                            <li class="previous @(pager.CurrentPage <= 1 ? "visible-paging" : "")">
+                                                <a class="page-link" asp-action="CourseList" asp-controller="Course" asp-route-page="@(pager.CurrentPage - 1)" asp-route-cate="@cate"><i class="ti-arrow-left"></i> Prev</a>
+                                            </li>
+                                            @for (var pge = pager.StartPage; pge <= pager.EndPage; pge++)
+                                            {
+                                                <li class="page-item @(pge == pager.CurrentPage ? "active" : "")">
+                                                    <a class="page-link" asp-action="CourseList" asp-controller="Course" asp-route-page="@pge" asp-route-cate="@cate"> @pge </a>
+                                                </li>
+                                            }
+                                            <li class="next @(pager.CurrentPage == pager.EndPage ? "visible-paging" : "")">
+                                                <a class="page-link" asp-action="CourseList" asp-controller="Course" asp-route-page="@(pager.CurrentPage + 1)" asp-route-cate="@cate">Next <i class="ti-arrow-right"></i></a>
+                                            </li>
+                                        </ul>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- contact area END -->
+
+</div>
+
+

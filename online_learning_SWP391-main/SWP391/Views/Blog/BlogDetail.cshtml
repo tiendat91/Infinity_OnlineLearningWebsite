@@ -1,0 +1,216 @@
+﻿@model SWP391.Models.Blog
+
+@{
+    ViewData["Title"] = "Blog Detail";
+    var count = 0;
+    var recentComment = ViewBag.RecentComment;
+}
+
+<style>
+    .action-box img,
+    .ttr-post-media img {
+        width: 100%;
+        height: auto;
+    }
+</style>
+
+
+<div class="page-content bg-white">
+    <!-- inner page banner -->
+    <div class="page-banner ovbl-dark" style="background-image:url(assets/images/banner/banner2.jpg);">
+        <div class="container">
+            <div class="page-banner-entry">
+                <h1 class="text-white">Blog Details</h1>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb row -->
+    <div class="breadcrumb-row">
+        <div class="container">
+            <ul class="list-inline">
+                <li><a href="#">Home</a></li>
+                <li>Blog Details</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Breadcrumb row END -->
+    <div class="content-block">
+        <div class="section-area section-sp1">
+            <div class="container">
+                <div class="row">
+                    <!-- Left part start -->
+                    <div class="col-lg-8 col-xl-8">
+                        <!-- blog start -->
+                        <div class="recent-news blog-lg">
+                            <div class="action-box blog-lg">
+                                <img src="~/img/@Html.DisplayFor(model => model.ThumbnailURL)" alt="">
+                            </div>
+                            <div class="info-bx">
+                                <ul class="media-post">
+                                    <li><a href="#"><i class="fa fa-calendar"></i>@Html.DisplayFor(model => model.CreatedDate)</a></li>
+                                </ul>
+                                <h5 class="post-title"><a href="#">@Html.DisplayFor(model => model.Title)</a></h5>
+                                <p>@Html.DisplayFor(model => model.Content)</p>
+                                <p class="abs">
+                                    <iframe style="margin-left:30px" height="360" width="640" frameborder="0" src="//www.youtube.com/embed/@Html.DisplayFor(model => model.VideoURL)" allowfullscreen></iframe>
+                                </p>
+
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                                <div class="widget_tag_cloud">
+                                    <h6>CATEGORIES</h6>
+                                    <div class="tagcloud">
+                                        @foreach (var item in ViewData["category"] as List<Category>)
+                                        {
+                                            <a asp-controller="Blog" asp-action="BlogList" asp-route-CatID="@item.CategoryId">@item.CategoryValue</a>
+
+                                        }
+                                    </div>
+                                </div>
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                                <h6>SHARE </h6>
+                                <ul class="list-inline contact-social-bx">
+                                    <li><a href="#" class="btn outline radius-xl"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="#" class="btn outline radius-xl"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="#" class="btn outline radius-xl"><i class="fa fa-linkedin"></i></a></li>
+                                    <li><a href="#" class="btn outline radius-xl"><i class="fa fa-google-plus"></i></a></li>
+                                </ul>
+                                <div class="ttr-divider bg-gray"><i class="icon-dot c-square"></i></div>
+                            </div>
+                        </div>
+                        <div class="clear" id="comment-list">
+                            <div class="comments-area" id="comments">
+                                <h2 class="comments-title">@recentComment Comments</h2>
+                                <div class="clearfix m-b20">
+                                    <!-- comment list END -->
+                                    <ol class="comment-list">
+                                        @foreach (var item in ViewData["comments"] as List<Comment>)
+                                        {
+                                            <li class="comment">
+                                                <div class="comment-body">
+                                                    <div class="comment-author vcard"> <img class="avatar photo" src="~/img/@Html.DisplayFor(modelItem => item.User.ProfilePictureURL)" alt=""> <cite class="fn">@Model.User.FullName</cite> <span class="says">says:</span> </div>
+                                                    <div class="comment-meta"> <a href="#">@DateTime.Now.ToShortDateString()</a> </div>
+                                                    <p>
+                                                        @Html.DisplayFor(modelItem => item.CommentBody)
+                                                    </p>
+                                                    <div class="reply"> <a href="#" class="comment-reply-link">Reply</a> </div>
+                                                </div>
+                                            </li>
+                                        }
+
+                                    </ol>
+                                    <!-- comment list END -->
+                                    <!-- Form -->
+                                    <div class="comment-respond" id="respond">
+                                        <h4 class="comment-reply-title" id="reply-title">Leave a Reply <small> <a style="display:none;" href="#" id="cancel-comment-reply-link" rel="nofollow">Cancel reply</a> </small> </h4>
+                                        <form class="comment-form" id="commentform" asp-action="AddComment" method="post">
+                                            <p class="comment-form-author">
+                                                <label for="author">Name <span class="required">*</span></label>
+                                                <input type="text" value="" name="Name" placeholder="Author" id="author">
+                                            </p>
+                                            <input name="BlogId" value="@Model.BlogId" hidden>
+                                            <input name="UserId" value="@Model.User.Id" hidden>
+                                            <p class="comment-form-comment">
+                                                <label for="comment">Comment</label>
+                                                <textarea rows="8" name="comment" placeholder="Comment" id="comment"></textarea>
+                                            </p>
+                                            <p class="form-submit">
+                                                <input type="submit" value="Submit Comment" class="submit" id="submit" name="submit">
+                                            </p>
+                                        </form>
+                                    </div>
+                                    <!-- Form -->
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- blog END -->
+                    </div>
+                    <!-- Left part END -->
+                    <!-- Side bar start -->
+                    <div class="col-lg-4 col-xl-4">
+                        <aside class="side-bar sticky-top">
+                            <div class="widget">
+                                <h6 class="widget-title">Search</h6>
+                                <div class="search-bx style-1">
+                                    <form role="search" method="post" asp-controller="Blog" asp-action="bloglist">
+                                        <div class="input-group">
+                                            <input name="keyWord" class="form-control" placeholder="Enter your keywords..." type="text">
+                                            <span class="input-group-btn">
+                                                <button type="submit" class="fa fa-search text-primary"></button>
+                                            </span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="widget recent-posts-entry">
+                                <h6 class="widget-title">Recent Posts</h6>
+                                <div class="widget-post-bx">
+                                    @*NỘI DUNG RECENT POST*@
+                                    @*HIỆN THỊ TỐI ĐA 3 CÁI THEO THỜI GIAN GẦN NHẤT*@
+                                    @foreach (var item in ViewData["recentBlogs"] as List<Blog>)
+                                    {
+                                        ++count;
+                                        if (count <= 5)
+                                        {
+                                            <div class="widget-post clearfix">
+                                                <div class="ttr-post-media"> <img src="~/img/@Html.DisplayFor(modelItem => item.ThumbnailURL)" width="200" height="143"> </div>
+                                                <div class="ttr-post-info">
+                                                    <div class="ttr-post-header">
+                                                        <h6 class="post-title"><a asp-controller="Blog" asp-action="BlogDetail" asp-route-id="@item.BlogId">@Html.DisplayFor(modelItem => item.Title)</a></h6>
+                                                    </div>
+                                                    <ul class="media-post">
+                                                        <li><a href="#"><i class="fa fa-calendar"></i>@Html.DisplayFor(modelItem => item.CreatedDate)</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                            <div class="widget widget-newslatter">
+                                <h6 class="widget-title">Newsletter</h6>
+                                <div class="news-box">
+                                    <p>Enter your e-mail and subscribe to our newsletter.</p>
+                                    <form class="subscription-form" action="http://educhamp.themetrades.com/demo/assets/script/mailchamp.php" method="post">
+                                        <div class="ajax-message"></div>
+                                        <div class="input-group">
+                                            <input name="dzEmail" required="required" type="email" class="form-control" placeholder="Your Email Address" />
+                                            <button name="submit" value="Submit" type="submit" class="btn black radius-no">
+                                                <i class="fa fa-paper-plane-o"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="widget widget_gallery gallery-grid-4">
+                                <h6 class="widget-title">Our Gallery</h6>
+                                <ul>
+                                    <li><div><a href="#"><img src="~/img/thumbnail1.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail2.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail3.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail4.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail5.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail6.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail7.jpg" alt=""></a></div></li>
+                                    <li><div><a href="#"><img src="~/img/thumbnail8.jpg" alt=""></a></div></li>
+                                </ul>
+                            </div>
+                            <div class="widget widget_tag_cloud">
+                                <h6 class="widget-title">Tags</h6>
+                                <div class="tagcloud">
+                                    @foreach (var item in ViewData["category"] as List<Category>)
+                                    {
+                                        <a asp-controller="Blog" asp-action="BlogList" asp-route-CatID="@item.CategoryId">@item.CategoryValue</a>
+
+                                    }
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                    <!-- Side bar END -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
